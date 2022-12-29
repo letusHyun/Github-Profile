@@ -6,6 +6,7 @@ target 'Github-Profile' do
   use_frameworks!
 
 pod 'SnapKit'
+pod 'Then'
 
   # Pods for Github-Profile
 
