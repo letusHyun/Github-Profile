@@ -10,10 +10,13 @@ import SnapKit
 import Then
 
 class UserProfileViewController: UIViewController {
-
-//  let thumbnailImageView = UIImageView().then {
-//    <#code#>
-//  }
+//MARK: Property
+  private(set) var user: UserProfile?
+  
+  let thumbnailImageView = UIImageView().then {
+    $0.image = UIImage(systemName: "sun.min.fill")
+    $0.backgroundColor = .systemCyan
+  }
   
   let nameLabel = UILabel().then {
     $0.text = "Name"
@@ -44,17 +47,37 @@ class UserProfileViewController: UIViewController {
     
     setUpView()
     setUpConstraints()
+    setUpUI()
+
   }
   
+  //viewDidLoad에서는 bound, frame 접근 불가능
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    thumbnailImageView.layer.cornerRadius = thumbnailImageView.frame.width / 2
+  }
+  
+  //MARK: Layout
   private func setUpView() {
+    self.view.addSubview(thumbnailImageView)
     self.view.addSubview(nameLabel)
     self.view.addSubview(loginLabel)
     self.view.addSubview(followerLabel)
     self.view.addSubview(followingLabel)
-//    self.view.addSubview(thumbnailImageView)
+  }
+  
+  private func setUpUI() {
+    
   }
   
   private func setUpConstraints() {
+    
+    thumbnailImageView.snp.makeConstraints {
+      $0.centerX.equalToSuperview()
+      $0.bottom.equalTo(nameLabel.snp.top).offset(-40)
+      $0.width.height.equalTo(150)
+    }
+    
     nameLabel.snp.makeConstraints {
       $0.leading.equalTo(self.view).offset(30)
       $0.centerY.equalTo(self.view)
@@ -66,7 +89,7 @@ class UserProfileViewController: UIViewController {
     }
     
     followerLabel.snp.makeConstraints {
-      $0.top.equalTo(loginLabel.snp.bottom).offset(10)
+      $0.top.equalTo(loginLabel.snp.bottom).offset(30)
       $0.leading.equalTo(self.view).offset(30)
     }
     
@@ -74,8 +97,16 @@ class UserProfileViewController: UIViewController {
       $0.top.equalTo(followerLabel.snp.bottom).offset(10)
       $0.leading.equalTo(self.view).offset(30)
     }
-    
   }
 
+  
+  /*
+   setupUI
+   userProfile
+   bind
+   search control
+   network
+   */
+  
 }
 
