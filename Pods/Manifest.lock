@@ -1,20 +1,24 @@
 PODS:
+  - Kingfisher (7.4.1)
   - SnapKit (5.6.0)
   - Then (3.0.0)
 
 DEPENDENCIES:
+  - Kingfisher (~> 7.4.1)
   - SnapKit
   - Then
 
 SPEC REPOS:
   trunk:
+    - Kingfisher
     - SnapKit
     - Then
 
 SPEC CHECKSUMS:
+  Kingfisher: cd762a593a61b2fbecf7645c00f9a801a3ebfc9c
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
   Then: 844265ae87834bbe1147d91d5d41a404da2ec27d
 
-PODFILE CHECKSUM: c63783819f05307a8372fcda71023617dd5410c8
+PODFILE CHECKSUM: c369dbc6d73b213a41c381e25eb7bb5ce529d8ec
 
 COCOAPODS: 1.11.3

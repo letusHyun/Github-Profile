@@ -7,6 +7,7 @@ target 'Github-Profile' do
 
 pod 'SnapKit'
 pod 'Then'
+pod 'Kingfisher', '~> 7.4.1'
 
   # Pods for Github-Profile
 

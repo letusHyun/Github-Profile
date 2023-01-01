@@ -8,20 +8,26 @@
 import UIKit
 import SnapKit
 import Then
+import Combine
+import Kingfisher
 
 class UserProfileViewController: UIViewController {
-//MARK: Property
-  private(set) var user: UserProfile?
   
-  let thumbnailImageView = UIImageView().then {
-    $0.image = UIImage(systemName: "sun.min.fill")
-    $0.backgroundColor = .systemCyan
+//MARK: - Property
+  let network = NetworkService(configuration: .default)
+  
+  @Published private(set) var user: UserProfile?
+  var subscriptions = Set<AnyCancellable>()
+  
+  let thumbnailImageView = UIImageView().then { 
+    //UIImageView는 UIImage객체를 보유하기 위해 가짜 subView를 생성
+    $0.layer.masksToBounds = true
   }
   
   let nameLabel = UILabel().then {
     $0.text = "Name"
     $0.textColor = .black
-    $0.font = .systemFont(ofSize: 20)
+    $0.font = .systemFont(ofSize: 20, weight: .bold)
   }
   
   let loginLabel = UILabel().then {
@@ -41,23 +47,63 @@ class UserProfileViewController: UIViewController {
     $0.textColor = .systemGray
     $0.font = .systemFont(ofSize: 15)
   }
-  
+  //MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+    //layout
     setUpView()
     setUpConstraints()
-    setUpUI()
-
+    bind()
+    embedSearchControl()
   }
   
   //viewDidLoad에서는 bound, frame 접근 불가능
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
-    thumbnailImageView.layer.cornerRadius = thumbnailImageView.frame.width / 2
+    self.thumbnailImageView.layer.cornerRadius = thumbnailImageView.frame.width / 2
   }
   
-  //MARK: Layout
+  //MARK: - Combine
+  private func bind() {
+    $user //user에 값 주입 받을 시 실행
+      .receive(on: RunLoop.main)
+      .sink { [weak self] user in
+        self?.update(user)
+      }.store(in: &subscriptions)
+  }
+  
+  private func update(_ user: UserProfile?) {
+    guard let user = user else {
+      self.nameLabel.text = "n/a"
+      self.loginLabel.text = "n/a"
+      self.followerLabel.text = ""
+      self.followingLabel.text = ""
+      self.thumbnailImageView.image = nil
+      return
+    }
+    
+    self.nameLabel.text = user.name
+    self.loginLabel.text = user.login
+    self.followerLabel.text = "follower: \(user.followers)"
+    self.followingLabel.text = "following: \(user.following)"
+    self.thumbnailImageView.kf.setImage(with: user.avatarUrl)
+    
+  }
+  
+  //MARK: - Setup
+  private func embedSearchControl() {
+    self.navigationItem.title = "Search"
+    let searchController = UISearchController(searchResultsController: nil)
+    searchController.hidesNavigationBarDuringPresentation = false
+    searchController.searchBar.placeholder = "Input ID"
+    
+    searchController.searchResultsUpdater = self //delegate
+    searchController.searchBar.delegate = self //delegate
+    
+    self.navigationItem.searchController = searchController
+  }
+  
+  //MARK: - Layout
   private func setUpView() {
     self.view.addSubview(thumbnailImageView)
     self.view.addSubview(nameLabel)
@@ -66,16 +112,12 @@ class UserProfileViewController: UIViewController {
     self.view.addSubview(followingLabel)
   }
   
-  private func setUpUI() {
-    
-  }
-  
   private func setUpConstraints() {
     
     thumbnailImageView.snp.makeConstraints {
       $0.centerX.equalToSuperview()
-      $0.bottom.equalTo(nameLabel.snp.top).offset(-40)
-      $0.width.height.equalTo(150)
+      $0.bottom.equalTo(nameLabel.snp.top).offset(-30)
+      $0.width.height.equalTo(160)
     }
     
     nameLabel.snp.makeConstraints {
@@ -98,15 +140,41 @@ class UserProfileViewController: UIViewController {
       $0.leading.equalTo(self.view).offset(30)
     }
   }
-
-  
-  /*
-   setupUI
-   userProfile
-   bind
-   search control
-   network
-   */
-  
 }
 
+extension UserProfileViewController: UISearchResultsUpdating {
+  func updateSearchResults(for searchController: UISearchController) {
+    
+  }
+}
+
+extension UserProfileViewController: UISearchBarDelegate {
+  
+  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    print("button clicked: \(searchBar.text!)")
+    
+    guard let keyword = searchBar.text, !keyword.isEmpty else { return }
+    
+    //Resource
+    let resource = Resource<UserProfile>(
+      base: "https://api.github.com/",
+      path: "users/\(keyword)",
+      params: [:],
+      header: ["Content-Type":"application/json"])
+    
+    //NetworkService
+    
+    network.load(resource)
+      .receive(on: RunLoop.main)
+      .sink { completion in
+        switch completion {
+        case .failure(let error):
+          self.user = nil
+        case .finished: break
+        }
+      } receiveValue: { user in
+        self.user = user
+      }
+      .store(in: &subscriptions)
+  }
+}
