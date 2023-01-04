@@ -14,42 +14,41 @@ import Kingfisher
 class UserProfileViewController: UIViewController {
   
 //MARK: - Property
-  let network = NetworkService(configuration: .default)
-  
-  @Published private(set) var user: UserProfile?
-  var subscriptions = Set<AnyCancellable>()
+  var viewModel: SearchViewModel!
   
   let thumbnailImageView = UIImageView().then { 
     //UIImageView는 UIImage객체를 보유하기 위해 가짜 subView를 생성
     $0.layer.masksToBounds = true
   }
-  
   let nameLabel = UILabel().then {
     $0.text = "Name"
     $0.textColor = .black
     $0.font = .systemFont(ofSize: 20, weight: .bold)
   }
-  
   let loginLabel = UILabel().then {
     $0.text = "Github id"
     $0.textColor = .systemGray
     $0.font = .systemFont(ofSize: 15)
   }
-  
   let followerLabel = UILabel().then {
     $0.text = "followers: 0"
     $0.textColor = .systemGray
     $0.font = .systemFont(ofSize: 15)
   }
-  
   let followingLabel = UILabel().then {
     $0.text = "following: 0"
     $0.textColor = .systemGray
     $0.font = .systemFont(ofSize: 15)
   }
+  
   //MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
+    viewModel = SearchViewModel(
+      network: NetworkService(configuration: .default),
+      selectedUser: nil
+    )
+    
     //layout
     setUpView()
     setUpConstraints()
@@ -65,30 +64,17 @@ class UserProfileViewController: UIViewController {
   
   //MARK: - Combine
   private func bind() {
-    $user //user에 값 주입 받을 시 실행
+    viewModel.selectedUser
       .receive(on: RunLoop.main)
       .sink { [weak self] user in
-        self?.update(user)
-      }.store(in: &subscriptions)
+        self?.nameLabel.text = self?.viewModel.name
+        self?.loginLabel.text = self?.viewModel.login
+        self?.followerLabel.text = self?.viewModel.followers
+        self?.followingLabel.text = self?.viewModel.following
+        self?.thumbnailImageView.kf.setImage(with: self?.viewModel.imageURL)
+      }.store(in: &viewModel.subscriptions)
   }
   
-  private func update(_ user: UserProfile?) {
-    guard let user = user else {
-      self.nameLabel.text = "n/a"
-      self.loginLabel.text = "n/a"
-      self.followerLabel.text = ""
-      self.followingLabel.text = ""
-      self.thumbnailImageView.image = nil
-      return
-    }
-    
-    self.nameLabel.text = user.name
-    self.loginLabel.text = user.login
-    self.followerLabel.text = "follower: \(user.followers)"
-    self.followingLabel.text = "following: \(user.following)"
-    self.thumbnailImageView.kf.setImage(with: user.avatarUrl)
-    
-  }
   
   //MARK: - Setup
   private func embedSearchControl() {
@@ -96,8 +82,7 @@ class UserProfileViewController: UIViewController {
     let searchController = UISearchController(searchResultsController: nil)
     searchController.hidesNavigationBarDuringPresentation = false
     searchController.searchBar.placeholder = "Input ID"
-    
-    searchController.searchResultsUpdater = self //delegate
+
     searchController.searchBar.delegate = self //delegate
     
     self.navigationItem.searchController = searchController
@@ -142,39 +127,9 @@ class UserProfileViewController: UIViewController {
   }
 }
 
-extension UserProfileViewController: UISearchResultsUpdating {
-  func updateSearchResults(for searchController: UISearchController) {
-    
-  }
-}
-
 extension UserProfileViewController: UISearchBarDelegate {
-  
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    print("button clicked: \(searchBar.text!)")
-    
     guard let keyword = searchBar.text, !keyword.isEmpty else { return }
-    
-    //Resource
-    let resource = Resource<UserProfile>(
-      base: "https://api.github.com/",
-      path: "users/\(keyword)",
-      params: [:],
-      header: ["Content-Type":"application/json"])
-    
-    //NetworkService
-    
-    network.load(resource)
-      .receive(on: RunLoop.main)
-      .sink { completion in
-        switch completion {
-        case .failure(let error):
-          self.user = nil
-        case .finished: break
-        }
-      } receiveValue: { user in
-        self.user = user
-      }
-      .store(in: &subscriptions)
+    viewModel.search(keyword: keyword)
   }
 }

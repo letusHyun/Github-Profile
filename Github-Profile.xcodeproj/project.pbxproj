@@ -16,6 +16,7 @@
 		133F2CBC295E23BF00A2D774 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133F2CBB295E23BF00A2D774 /* NetworkService.swift */; };
 		133F2CBE2961976B00A2D774 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133F2CBD2961976B00A2D774 /* Resource.swift */; };
 		133F2CC129619C1D00A2D774 /* Publisher+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133F2CC029619C1D00A2D774 /* Publisher+Utils.swift */; };
+		133F2D582965A1EF00A2D774 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133F2D572965A1EF00A2D774 /* SearchViewModel.swift */; };
 		2046C09CAA9704F5AE0098C1 /* Pods_Github_Profile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19BB7E4D17E630A41154F4A9 /* Pods_Github_Profile.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		133F2CBB295E23BF00A2D774 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		133F2CBD2961976B00A2D774 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		133F2CC029619C1D00A2D774 /* Publisher+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Utils.swift"; sourceTree = "<group>"; };
+		133F2D572965A1EF00A2D774 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		19BB7E4D17E630A41154F4A9 /* Pods_Github_Profile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Github_Profile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AEBF66BFB65AE9541BF4954 /* Pods-Github-Profile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Github-Profile.debug.xcconfig"; path = "Target Support Files/Pods-Github-Profile/Pods-Github-Profile.debug.xcconfig"; sourceTree = "<group>"; };
 		DB29F8FC8099A6CF11B59D7B /* Pods-Github-Profile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Github-Profile.release.xcconfig"; path = "Target Support Files/Pods-Github-Profile/Pods-Github-Profile.release.xcconfig"; sourceTree = "<group>"; };
@@ -51,6 +53,8 @@
 		133F2C97295DD80500A2D774 = {
 			isa = PBXGroup;
 			children = (
+				133F2D592965AE9200A2D774 /* View */,
+				133F2D562965A1DE00A2D774 /* ViewModel */,
 				133F2CBF29619C0A00A2D774 /* Utils */,
 				133F2CBA295E23A400A2D774 /* Network */,
 				133F2CB7295DF6D800A2D774 /* Model */,
@@ -74,7 +78,6 @@
 			children = (
 				133F2CA3295DD80500A2D774 /* AppDelegate.swift */,
 				133F2CA5295DD80500A2D774 /* SceneDelegate.swift */,
-				133F2CA7295DD80500A2D774 /* UserProfileViewController.swift */,
 				133F2CAC295DD80600A2D774 /* Assets.xcassets */,
 				133F2CAE295DD80600A2D774 /* LaunchScreen.storyboard */,
 				133F2CB1295DD80600A2D774 /* Info.plist */,
@@ -95,7 +98,6 @@
 			children = (
 				133F2CBB295E23BF00A2D774 /* NetworkService.swift */,
 				133F2CBD2961976B00A2D774 /* Resource.swift */,
-				133F2CC029619C1D00A2D774 /* Publisher+Utils.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -103,8 +105,25 @@
 		133F2CBF29619C0A00A2D774 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				133F2CC029619C1D00A2D774 /* Publisher+Utils.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		133F2D562965A1DE00A2D774 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				133F2D572965A1EF00A2D774 /* SearchViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		133F2D592965AE9200A2D774 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				133F2CA7295DD80500A2D774 /* UserProfileViewController.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		348EA9151D5F1DDB84EBCC62 /* Pods */ = {
@@ -240,6 +259,7 @@
 			files = (
 				133F2CBC295E23BF00A2D774 /* NetworkService.swift in Sources */,
 				133F2CB9295DF6E800A2D774 /* UserProfile.swift in Sources */,
+				133F2D582965A1EF00A2D774 /* SearchViewModel.swift in Sources */,
 				133F2CA8295DD80500A2D774 /* UserProfileViewController.swift in Sources */,
 				133F2CBE2961976B00A2D774 /* Resource.swift in Sources */,
 				133F2CC129619C1D00A2D774 /* Publisher+Utils.swift in Sources */,
